@@ -59,7 +59,6 @@ public class SlideshowFragment extends Fragment {
         FirebaseApp.initializeApp(getContext());
         mAuth = FirebaseAuth.getInstance();
         // [END initialize_auth]
-
         buttonLogin = root.findViewById(R.id.buttonLogin);
         editTextEmail = root.findViewById(R.id.editTextEmail);
         editTextPassword = root.findViewById(R.id.editTextPassword);

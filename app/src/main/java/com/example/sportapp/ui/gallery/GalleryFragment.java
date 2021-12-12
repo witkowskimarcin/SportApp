@@ -27,7 +27,7 @@ public class GalleryFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        fragmentService.setLastFragment(R.id.nav_slideshow);
+        fragmentService.setLastFragment(R.id.nav_gallery);
 
         if (authenticationService.isAuthenticated()) {
             galleryViewModel =
