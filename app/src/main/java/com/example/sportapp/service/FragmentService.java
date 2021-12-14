@@ -1,16 +1,11 @@
 package com.example.sportapp.service;
 
-import android.view.View;
-
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
 import com.example.sportapp.R;
-import com.google.android.material.navigation.NavigationView;
 
 public class FragmentService {
     private AppBarConfiguration appBarConfiguration;
@@ -38,7 +33,7 @@ public class FragmentService {
 
     public void navigateToLogin(FragmentActivity activity) {
         NavController navController = Navigation.findNavController(activity, R.id.nav_host_fragment);
-        navController.navigate(R.id.nav_slideshow);
+        navController.navigate(R.id.nav_login);
     }
 
     public void navigateToLastFragment(FragmentActivity activity){

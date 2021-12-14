@@ -45,7 +45,7 @@ public class GalleryFragment extends Fragment {
 
         // wroc do logowania
         NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
-        navController.navigate(R.id.nav_slideshow);
+        navController.navigate(R.id.nav_login);
         return null;
     }
 }

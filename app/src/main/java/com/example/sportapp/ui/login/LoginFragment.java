@@ -1,4 +1,4 @@
-package com.example.sportapp.ui.slideshow;
+package com.example.sportapp.ui.login;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -23,7 +23,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class SlideshowFragment extends Fragment {
+public class LoginFragment extends Fragment {
     private static final String TAG = "EmailPassword";
     // [START declare_auth]
     private FirebaseAuth mAuth;
@@ -35,7 +35,7 @@ public class SlideshowFragment extends Fragment {
 
     EditText editTextPassword;
 
-    private SlideshowViewModel slideshowViewModel;
+    private LoginViewModel loginViewModel;
 
     private final AuthenticationService authenticationService = AuthenticationService.getInstance();
 
@@ -43,9 +43,9 @@ public class SlideshowFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        slideshowViewModel =
-                new ViewModelProvider(this).get(SlideshowViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_slideshow, container, false);
+        loginViewModel =
+                new ViewModelProvider(this).get(LoginViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_login, container, false);
 //        final TextView textView = root.findViewById(R.id.text_slideshow);
 //        slideshowViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
 //            @Override
