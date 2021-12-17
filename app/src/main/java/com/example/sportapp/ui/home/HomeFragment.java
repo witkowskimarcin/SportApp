@@ -11,13 +11,17 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.sportapp.R;
 import com.example.sportapp.model.Carnet;
 import com.example.sportapp.model.Place;
 import com.example.sportapp.service.FragmentService;
 import com.example.sportapp.service.PlaceService;
+import com.example.sportapp.ui.PlacesFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -29,13 +33,13 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private FragmentService fragmentService = FragmentService.getInstance();
     private PlaceService placeService = PlaceService.getInstance();
 
     private HomeViewModel homeViewModel;
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     List<Place> places;
 
@@ -65,6 +69,13 @@ public class HomeFragment extends Fragment {
                 if (city.length() > 0) {
                     Toast.makeText(getContext(), city,
                             Toast.LENGTH_SHORT).show();
+
+                    FragmentManager fragmentManager = getParentFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.nav_host_fragment, PlacesFragment.class, null)
+                            .setReorderingAllowed(true)
+                            .addToBackStack("name") // name can be null
+                            .commit();
                 }
             }
         });

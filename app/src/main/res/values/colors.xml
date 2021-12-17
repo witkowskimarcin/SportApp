@@ -7,4 +7,20 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="colorPrimary">#7DA13F</color>
+    <color name="colorPrimaryDark">#CDE97C</color>
+    <color name="colorAccent">#F19121</color>
+
+    <color name="backgroundColor">#FFFFFF</color>
+    <color name="menubarBackgroundColor">#7DA13F</color>
+    <color name="menubarItemColor">#FFFFFF</color>
+
+    <color name="listItemBackgroundColor">#F19121</color>
+    <color name="listItemTextColor">#FFFFFF</color>
+
+    <color name="green">#4CAF50</color>
+    <color name="orange">#F19121</color>
+    <color name="price">#F43636</color>
+    <color name="button">#F44336</color>
 </resources>
