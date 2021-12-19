@@ -13,4 +13,6 @@ public class Carnet extends SimpleFirebaseObject {
     Integer price;
     String type;
     Integer value;
+    String title;
+    String description;
 }

@@ -6,14 +6,14 @@ import androidx.lifecycle.ViewModel;
 
 public class LoginViewModel extends ViewModel {
 
-    private MutableLiveData<String> mText;
+  private final MutableLiveData<String> mText;
 
-    public LoginViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is slideshow fragment");
-    }
+  public LoginViewModel() {
+    mText = new MutableLiveData<>();
+    mText.setValue("This is slideshow fragment");
+  }
 
-    public LiveData<String> getText() {
-        return mText;
-    }
+  public LiveData<String> getText() {
+    return mText;
+  }
 }

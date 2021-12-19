@@ -1,5 +1,6 @@
 package com.example.sportapp.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -11,10 +12,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class Place extends SimpleFirebaseObject {
-    String city;
-    String address;
-    String postCode;
-    String name;
-    List<Carnet> carnets;
+public class Place extends SimpleFirebaseObject implements Serializable {
+  String city;
+  String address;
+  String postCode;
+  String name;
+  String imgBase64;
+  List<Carnet> carnets;
 }
