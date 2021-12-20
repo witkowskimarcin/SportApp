@@ -1,14 +1,10 @@
 package com.example.sportapp.Adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,20 +13,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sportapp.R;
 import com.example.sportapp.interfaces.ClickListener;
-import com.example.sportapp.model.Carnet;
-import com.example.sportapp.model.Place;
-
-import org.apache.commons.lang3.StringUtils;
+import com.example.sportapp.model.Offer;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class OffersInfoViewAdapter extends RecyclerView.Adapter<OffersInfoViewAdapter.ViewHolder> {
-  private List<Carnet> offers;
+  private List<Offer> offers;
   private Context mContext;
   ClickListener clickListener;
 
-  public OffersInfoViewAdapter(List<Carnet> offers, ClickListener listener, Context mContext) {
+  public OffersInfoViewAdapter(List<Offer> offers, ClickListener listener, Context mContext) {
     this.offers = offers;
     this.clickListener = listener;
     this.mContext = mContext;
@@ -47,9 +40,9 @@ public class OffersInfoViewAdapter extends RecyclerView.Adapter<OffersInfoViewAd
 
   @Override
   public void onBindViewHolder(@NonNull OffersInfoViewAdapter.ViewHolder viewHolder, int i) {
-    final Carnet carnet = offers.get(i);
-    viewHolder.setName(carnet.getTitle());
-    viewHolder.setDescription(carnet.getDescription());
+    final Offer offer = offers.get(i);
+    viewHolder.setName(offer.getTitle());
+    viewHolder.setDescription(offer.getDescription());
   }
 
   @Override

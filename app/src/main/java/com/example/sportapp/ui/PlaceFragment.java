@@ -1,14 +1,21 @@
 package com.example.sportapp.ui;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,8 +25,9 @@ import com.example.sportapp.interfaces.ClickListener;
 import com.example.sportapp.model.Place;
 import com.example.sportapp.service.AuthenticationService;
 import com.example.sportapp.service.FragmentService;
-import com.example.sportapp.ui.gallery.GalleryViewModel;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class PlaceFragment extends Fragment {
   private static final String TAG = "PlaceFragment";
@@ -32,13 +40,15 @@ public class PlaceFragment extends Fragment {
 
   private FragmentService fragmentService = FragmentService.getInstance();
 
-  private GalleryViewModel galleryViewModel;
-
   private Place place;
+  private TextView title;
+  private TextView description;
+  private ImageView image;
+  private LinearLayout linearLayout;
 
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    fragmentService.setLastFragment(R.layout.fragment_place);
+    fragmentService.setLastFragment(R.id.nav_home);
 
     //        if (authenticationService.isAuthenticated()) {
     //    galleryViewModel = new ViewModelProvider(this).get(GalleryViewModel.class);
@@ -71,7 +81,21 @@ public class PlaceFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
     this.components(view);
 
-    infoRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+    title.setText(place.getName());
+    description.setText(place.getAddress() + " " + place.getPostCode());
+    if (StringUtils.isNotBlank(place.getImgBase64())) {
+      byte[] decodedString = Base64.decode(place.getImgBase64(), Base64.DEFAULT);
+      Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+      image.setImageBitmap(decodedByte);
+    }
+
+    RecyclerView carnets = new RecyclerView(getContext());
+//    carnets.setId(69);
+    carnets.setLayoutParams(
+        new RecyclerView.LayoutParams(
+            RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
+    linearLayout.addView(carnets);
+    carnets.setLayoutManager(new LinearLayoutManager(getContext()));
 
     offersInfoViewAdapter =
         new OffersInfoViewAdapter(
@@ -85,27 +109,31 @@ public class PlaceFragment extends Fragment {
                         Toast.LENGTH_SHORT)
                     .show();
 
-                //                        Bundle args = new Bundle();
-                //                        args.putSerializable("place", places.get(position));
-                //                        FragmentManager fragmentManager =
-                // getParentFragmentManager();
-                //                        fragmentManager
-                //                                .beginTransaction()
-                //                                .replace(R.id.nav_host_fragment,
-                // PlaceFragment.class, args)
-                //                                .setReorderingAllowed(true)
-                //                                .addToBackStack("name") // name can be null
-                //                                .commit();
+                                        Bundle args = new Bundle();
+                args.putSerializable("place", place);
+                args.putSerializable("offer", place.getCarnets().get(position));
+                                        FragmentManager fragmentManager =
+                 getParentFragmentManager();
+                                        fragmentManager
+                                                .beginTransaction()
+                                                .replace(R.id.nav_host_fragment,
+                 OfferFragment.class, args)
+                                                .setReorderingAllowed(true)
+                                                .addToBackStack("OfferFragment") // name can be null
+                                                .commit();
               }
 
               @Override
               public void onLongClicked(int position) {}
             },
             getContext());
-    infoRecyclerView.setAdapter(offersInfoViewAdapter);
+    carnets.setAdapter(offersInfoViewAdapter);
   }
 
   private void components(View view) {
-    infoRecyclerView = view.findViewById(R.id.infoRecyclerView);
+    title = view.findViewById(R.id.name);
+    description = view.findViewById(R.id.description);
+    image = view.findViewById(R.id.photo);
+    linearLayout = view.findViewById(R.id.linearLayout);
   }
 }

@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.sportapp.Adapters.PlacesInfoViewAdapter;
 import com.example.sportapp.R;
 import com.example.sportapp.interfaces.ClickListener;
-import com.example.sportapp.model.Carnet;
+import com.example.sportapp.model.Offer;
 import com.example.sportapp.model.Place;
 import com.example.sportapp.service.AuthenticationService;
 import com.example.sportapp.service.FragmentService;
@@ -48,7 +48,7 @@ public class PlacesFragment extends Fragment {
 
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    fragmentService.setLastFragment(R.layout.fragment_places);
+    fragmentService.setLastFragment(R.id.nav_home);
 
     //        if (authenticationService.isAuthenticated()) {
 //    galleryViewModel = new ViewModelProvider(this).get(GalleryViewModel.class);
@@ -145,14 +145,14 @@ public class PlacesFragment extends Fragment {
                   public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
                       if (task.getResult() != null) {
-                        List<Carnet> _carnets = new ArrayList<>();
+                        List<Offer> _offers = new ArrayList<>();
                         List<DocumentSnapshot> documents = task.getResult().getDocuments();
                         for (DocumentSnapshot document : documents) {
-                          Carnet carnet = document.toObject(Carnet.class);
-                          carnet.setUuid(document.getId());
-                          _carnets.add(carnet);
+                          Offer offer = document.toObject(Offer.class);
+                          offer.setUuid(document.getId());
+                          _offers.add(offer);
                         }
-                        place.setCarnets(_carnets);
+                        place.setCarnets(_offers);
                         placesInfoViewAdapter =
                             new PlacesInfoViewAdapter(
                                 places,

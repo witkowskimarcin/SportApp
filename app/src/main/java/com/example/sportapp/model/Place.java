@@ -18,5 +18,5 @@ public class Place extends SimpleFirebaseObject implements Serializable {
   String postCode;
   String name;
   String imgBase64;
-  List<Carnet> carnets;
+  List<Offer> carnets;
 }
