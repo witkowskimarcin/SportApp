@@ -1,4 +1,4 @@
-package com.example.sportapp.ui;
+package com.example.sportapp.fragment;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -34,7 +34,6 @@ public class PlaceFragment extends Fragment {
   private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
   private RecyclerView infoRecyclerView;
-  private OffersInfoViewAdapter offersInfoViewAdapter;
 
   private final AuthenticationService authenticationService = AuthenticationService.getInstance();
 
@@ -51,16 +50,7 @@ public class PlaceFragment extends Fragment {
     fragmentService.setLastFragment(R.id.nav_home);
 
     //        if (authenticationService.isAuthenticated()) {
-    //    galleryViewModel = new ViewModelProvider(this).get(GalleryViewModel.class);
     View root = inflater.inflate(R.layout.fragment_place, container, false);
-    //            final TextView textView = root.findViewById(R.id.text_gallery);
-    //            galleryViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>()
-    // {
-    //                @Override
-    //                public void onChanged(@Nullable String s) {
-    //                    textView.setText(s);
-    //                }
-    //            });
 
     if (getArguments() != null) {
       place = (Place) getArguments().getSerializable("place");
@@ -90,14 +80,14 @@ public class PlaceFragment extends Fragment {
     }
 
     RecyclerView carnets = new RecyclerView(getContext());
-//    carnets.setId(69);
+    //    carnets.setId(69);
     carnets.setLayoutParams(
         new RecyclerView.LayoutParams(
             RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
     linearLayout.addView(carnets);
     carnets.setLayoutManager(new LinearLayoutManager(getContext()));
 
-    offersInfoViewAdapter =
+    OffersInfoViewAdapter offersInfoViewAdapter =
         new OffersInfoViewAdapter(
             place.getCarnets(),
             new ClickListener() {
@@ -109,18 +99,16 @@ public class PlaceFragment extends Fragment {
                         Toast.LENGTH_SHORT)
                     .show();
 
-                                        Bundle args = new Bundle();
+                Bundle args = new Bundle();
                 args.putSerializable("place", place);
                 args.putSerializable("offer", place.getCarnets().get(position));
-                                        FragmentManager fragmentManager =
-                 getParentFragmentManager();
-                                        fragmentManager
-                                                .beginTransaction()
-                                                .replace(R.id.nav_host_fragment,
-                 OfferFragment.class, args)
-                                                .setReorderingAllowed(true)
-                                                .addToBackStack("OfferFragment") // name can be null
-                                                .commit();
+                FragmentManager fragmentManager = getParentFragmentManager();
+                fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.nav_host_fragment, OfferFragment.class, args)
+                    .setReorderingAllowed(true)
+                    .addToBackStack("OfferFragment") // name can be null
+                    .commit();
               }
 
               @Override

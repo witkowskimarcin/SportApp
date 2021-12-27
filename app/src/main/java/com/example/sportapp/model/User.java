@@ -1,5 +1,7 @@
 package com.example.sportapp.model;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
@@ -10,6 +12,7 @@ public class User extends SimpleFirebaseObject {
   String city;
   String address;
   String country;
+  List<BoughtOffer> offers;
   Role role;
 
   public enum Role {

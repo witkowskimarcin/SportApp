@@ -7,6 +7,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
+import com.example.sportapp.model.BoughtOffer;
 import com.example.sportapp.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -16,8 +17,16 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AuthenticationService {
+  FirebaseFirestore db = FirebaseFirestore.getInstance();
+
   private static final String TAG = "EmailPassword";
 
   private FirebaseAuth mAuth;
@@ -86,9 +95,8 @@ public class AuthenticationService {
     }
   }
 
-  public void getUserInfo() {
+  private void getUserInfo() {
     if (user != null) {
-      FirebaseFirestore db = FirebaseFirestore.getInstance();
       DocumentReference docRef = db.collection("users").document(user.getEmail());
       docRef
           .get()
@@ -103,7 +111,7 @@ public class AuthenticationService {
                       userExtended = document.toObject(User.class);
                       userExtended.setEmail(user.getEmail());
                       userExtended.setUuid(user.getUid());
-                      System.out.println("");
+                      getOffers();
                     } else {
                       Log.d(TAG, "No such document");
                     }
@@ -112,6 +120,42 @@ public class AuthenticationService {
                   }
                 }
               });
+    }
+  }
+
+  private void getOffers() {
+    if (userExtended != null) {
+      Task<QuerySnapshot> querySnapshotTask =
+          db.collection("users")
+              .document(userExtended.getEmail())
+              .collection("savedPositions")
+              .get()
+              .addOnCompleteListener(
+                  new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                      if (task.isSuccessful()) {
+                        if (task.getResult() != null) {
+                          List<BoughtOffer> _offers = new ArrayList<>();
+                          List<DocumentSnapshot> documents = task.getResult().getDocuments();
+                          for (DocumentSnapshot document : documents) {
+                            BoughtOffer offer = document.toObject(BoughtOffer.class);
+                            offer.setUuid(document.getId());
+                            OffsetDateTime now = OffsetDateTime.now();
+                            OffsetDateTime endDate =
+                                OffsetDateTime.parse(
+                                    offer.getEndDate(), DateTimeFormatter.ISO_DATE);
+                            if (now.isAfter(endDate)) {
+                              _offers.add(offer);
+                            }
+                          }
+                          userExtended.setOffers(_offers);
+                        }
+                      } else {
+                        Log.w(TAG, "Error getting documents.", task.getException());
+                      }
+                    }
+                  });
     }
   }
 

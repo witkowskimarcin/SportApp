@@ -1,4 +1,4 @@
-package com.example.sportapp.ui;
+package com.example.sportapp.fragment;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -21,7 +21,6 @@ import com.example.sportapp.model.Offer;
 import com.example.sportapp.model.Place;
 import com.example.sportapp.service.AuthenticationService;
 import com.example.sportapp.service.FragmentService;
-import com.example.sportapp.ui.gallery.GalleryViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -42,8 +41,6 @@ public class PlacesFragment extends Fragment {
 
   private FragmentService fragmentService = FragmentService.getInstance();
 
-  private GalleryViewModel galleryViewModel;
-
   private List<Place> places;
 
   public View onCreateView(
@@ -51,16 +48,7 @@ public class PlacesFragment extends Fragment {
     fragmentService.setLastFragment(R.id.nav_home);
 
     //        if (authenticationService.isAuthenticated()) {
-//    galleryViewModel = new ViewModelProvider(this).get(GalleryViewModel.class);
     View root = inflater.inflate(R.layout.fragment_places, container, false);
-    //            final TextView textView = root.findViewById(R.id.text_gallery);
-    //            galleryViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>()
-    // {
-    //                @Override
-    //                public void onChanged(@Nullable String s) {
-    //                    textView.setText(s);
-    //                }
-    //            });
     return root;
     //        }
     //
@@ -78,27 +66,6 @@ public class PlacesFragment extends Fragment {
 
     infoRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     getAllPlaces();
-    //        infoViewAdapter = new InfoViewAdapter(places, new ClickListener() {
-    //            @Override
-    //            public void onPositionClicked(int position) {
-    ////                Intent intent = new Intent(getActivity(), FoodSelection.class);
-    ////                intent.putExtra("pasta", (Serializable) foodArrayList.get(position));
-    ////                startActivity(intent);
-    //
-    ////                OsobaFragment fragment = new OsobaFragment();
-    ////                FragmentTransaction transaction =
-    // getActivity().getSupportFragmentManager().beginTransaction();
-    ////                transaction.replace(R.id.nav_host_fragment, fragment);
-    ////                transaction.addToBackStack(null);
-    ////                transaction.commit();
-    //            }
-    //
-    //            @Override
-    //            public void onLongClicked(int position) {
-    //
-    //            }
-    //        }, getContext());
-    //        infoRecyclerView.setAdapter(infoViewAdapter);
   }
 
   private void components(View view) {
@@ -110,27 +77,24 @@ public class PlacesFragment extends Fragment {
         db.collection("places")
             .get()
             .addOnCompleteListener(
-                new OnCompleteListener<QuerySnapshot>() {
-                  @Override
-                  public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                      if (task.getResult() != null) {
-                        List<Place> _places = new ArrayList<>();
-                        List<DocumentSnapshot> documents = task.getResult().getDocuments();
-                        for (DocumentSnapshot document : documents) {
-                          Place place = document.toObject(Place.class);
-                          place.setUuid(document.getId());
-                          getAllCarnetsFromPlace(place);
-                          _places.add(place);
+                    task -> {
+                      if (task.isSuccessful()) {
+                        if (task.getResult() != null) {
+                          List<Place> _places = new ArrayList<>();
+                          List<DocumentSnapshot> documents = task.getResult().getDocuments();
+                          for (DocumentSnapshot document : documents) {
+                            Place place = document.toObject(Place.class);
+                            place.setUuid(document.getId());
+                            getAllCarnetsFromPlace(place);
+                            _places.add(place);
+                          }
+                          System.out.println("Do");
+                          places = _places;
                         }
-                        System.out.println("Do");
-                        places = _places;
+                      } else {
+                        Log.w(TAG, "Error getting documents.", task.getException());
                       }
-                    } else {
-                      Log.w(TAG, "Error getting documents.", task.getException());
-                    }
-                  }
-                });
+                    });
   }
 
   public void getAllCarnetsFromPlace(Place place) {
@@ -174,20 +138,6 @@ public class PlacesFragment extends Fragment {
                                         .setReorderingAllowed(true)
                                         .addToBackStack("name") // name can be null
                                         .commit();
-
-                                    //                Intent intent = new Intent(getActivity(),
-                                    // FoodSelection.class);
-                                    //                intent.putExtra("pasta", (Serializable)
-                                    // foodArrayList.get(position));
-                                    //                startActivity(intent);
-
-                                    //                OsobaFragment fragment = new OsobaFragment();
-                                    //                FragmentTransaction transaction =
-                                    // getActivity().getSupportFragmentManager().beginTransaction();
-                                    //                transaction.replace(R.id.nav_host_fragment,
-                                    // fragment);
-                                    //                transaction.addToBackStack(null);
-                                    //                transaction.commit();
                                   }
 
                                   @Override

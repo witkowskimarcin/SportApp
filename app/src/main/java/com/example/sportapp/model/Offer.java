@@ -17,4 +17,5 @@ public class Offer extends SimpleFirebaseObject implements Serializable {
   Integer value;
   String title;
   String description;
+  String imgBase64;
 }

@@ -1,4 +1,4 @@
-package com.example.sportapp.ui.login;
+package com.example.sportapp.fragment;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.sportapp.R;
 import com.example.sportapp.service.AuthenticationService;
@@ -33,20 +32,10 @@ public class LoginFragment extends Fragment {
   EditText editTextPassword;
   // [START declare_auth]
   private FirebaseAuth mAuth;
-  private LoginViewModel loginViewModel;
 
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
     View root = inflater.inflate(R.layout.fragment_login, container, false);
-    //        final TextView textView = root.findViewById(R.id.text_slideshow);
-    //        slideshowViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-    //            @Override
-    //            public void onChanged(@Nullable String s) {
-    //                textView.setText(s);
-    //            }
-    //        });
-
     // [START initialize_auth]
     // Initialize Firebase Auth
     FirebaseApp.initializeApp(getContext());

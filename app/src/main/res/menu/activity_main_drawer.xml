@@ -7,11 +7,11 @@
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_menu_camera"
-            android:title="@string/menu_home" />
+            android:title="Strona główna" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_my_positions"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/menu_gallery" />
+            android:title="Moje pozycje" />
         <item
             android:id="@+id/nav_login"
             android:icon="@drawable/ic_menu_slideshow"
