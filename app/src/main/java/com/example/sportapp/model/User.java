@@ -12,6 +12,7 @@ public class User extends SimpleFirebaseObject {
   String city;
   String address;
   String country;
+  String postcode;
   List<BoughtOffer> offers;
   Role role;
 

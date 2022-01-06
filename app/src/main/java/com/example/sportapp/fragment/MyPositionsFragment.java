@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -15,7 +14,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.sportapp.Adapters.OffersInfoViewAdapter;
 import com.example.sportapp.R;
 import com.example.sportapp.interfaces.ClickListener;
@@ -33,6 +31,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observer;
 import java.util.stream.Collectors;
 
 public class MyPositionsFragment extends Fragment {
@@ -51,6 +50,11 @@ public class MyPositionsFragment extends Fragment {
     fragmentService.setLastFragment(R.id.nav_my_positions);
 
     if (authenticationService.isAuthenticated()) {
+      //      authenticationService.fetchUserInfo();
+      places = new ArrayList<>();
+      Observer observer = (observable, o) -> setPlaces();
+      authenticationService.addObserver(observer);
+
       View root = inflater.inflate(R.layout.fragment_my_positions, container, false);
       return root;
     }
@@ -65,42 +69,39 @@ public class MyPositionsFragment extends Fragment {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     components(view);
-    places = new ArrayList<>();
+    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+    super.onCreate(savedInstanceState);
+  }
+
+  private void setPlaces() {
     List<String> placesIds =
         authenticationService.getUser().getOffers().stream()
             .map(boughtOffer -> boughtOffer.getPlaceId())
             .collect(Collectors.toList());
-    db.collection("places")
-        .whereIn(FieldPath.documentId(), placesIds)
-        .get()
-        .addOnCompleteListener(
-            task -> {
-              if (task.isSuccessful()) {
-                if (task.getResult() != null) {
-                  List<Place> _places = new ArrayList<>();
-                  List<DocumentSnapshot> documents = task.getResult().getDocuments();
-                  for (DocumentSnapshot document : documents) {
-                    Place place = document.toObject(Place.class);
-                    place.setUuid(document.getId());
-                    getOffers(place);
-                    _places.add(place);
+    if (placesIds.size() > 0) {
+      db.collection("places")
+          .whereIn(FieldPath.documentId(), placesIds)
+          .get()
+          .addOnCompleteListener(
+              task -> {
+                if (task.isSuccessful()) {
+                  if (task.getResult() != null) {
+                    List<Place> _places = new ArrayList<>();
+                    List<DocumentSnapshot> documents = task.getResult().getDocuments();
+                    for (DocumentSnapshot document : documents) {
+                      Place place = document.toObject(Place.class);
+                      place.setUuid(document.getId());
+                      getOffers(place);
+                      _places.add(place);
+                    }
+                    System.out.println("Do");
+                    places = _places;
                   }
-                  System.out.println("Do");
-                  places = _places;
+                } else {
+                  Log.w(TAG, "Error getting documents.", task.getException());
                 }
-              } else {
-                Log.w(TAG, "Error getting documents.", task.getException());
-              }
-            });
-
-    //    carnets = new RecyclerView(getContext());
-    //    carnets.setLayoutParams(
-    //        new RecyclerView.LayoutParams(
-    //            RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
-    //    linearLayout.addView(carnets);
-    //    carnets.setLayoutManager(new LinearLayoutManager(getContext()));
-    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-    super.onCreate(savedInstanceState);
+              });
+    }
   }
 
   private void getOffers(Place place) {
