@@ -62,6 +62,7 @@ public class AuthenticationService {
   }
 
   public void addObserver(Observer observer) {
+    observable.deleteObservers();
     observable.addObserver(observer);
   }
 

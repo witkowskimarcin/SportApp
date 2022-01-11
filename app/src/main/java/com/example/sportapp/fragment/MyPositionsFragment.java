@@ -22,7 +22,6 @@ import com.example.sportapp.model.Offer;
 import com.example.sportapp.model.Place;
 import com.example.sportapp.service.AuthenticationService;
 import com.example.sportapp.service.FragmentService;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
@@ -50,10 +49,10 @@ public class MyPositionsFragment extends Fragment {
     fragmentService.setLastFragment(R.id.nav_my_positions);
 
     if (authenticationService.isAuthenticated()) {
-      //      authenticationService.fetchUserInfo();
       places = new ArrayList<>();
       Observer observer = (observable, o) -> setPlaces();
       authenticationService.addObserver(observer);
+      authenticationService.fetchUserInfo();
 
       View root = inflater.inflate(R.layout.fragment_my_positions, container, false);
       return root;
@@ -105,6 +104,7 @@ public class MyPositionsFragment extends Fragment {
   }
 
   private void getOffers(Place place) {
+    offers = new ArrayList<>();
     List<String> offersIds =
         authenticationService.getUser().getOffers().stream()
             .map(BoughtOffer::getOfferId)
@@ -116,32 +116,29 @@ public class MyPositionsFragment extends Fragment {
             .whereIn(FieldPath.documentId(), offersIds)
             .get()
             .addOnCompleteListener(
-                new OnCompleteListener<QuerySnapshot>() {
-                  @Override
-                  public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                      if (task.getResult() != null) {
-                        List<Offer> _offers = new ArrayList<>();
-                        List<DocumentSnapshot> documents = task.getResult().getDocuments();
-                        for (DocumentSnapshot document : documents) {
-                          Offer offer = document.toObject(Offer.class);
-                          offer.setUuid(document.getId());
-                          BoughtOffer boughtOffer =
-                              authenticationService.getUser().getOffers().stream()
-                                  .filter(o -> o.getOfferId().equals(offer.getUuid()))
-                                  .findFirst()
-                                  .get();
-                          offer.setDescription("Ważne do: " + boughtOffer.getEndDate());
-                          offer.setImgBase64(place.getImgBase64());
-                          _offers.add(offer);
-                          offers.add(offer);
-                        }
-                        place.setCarnets(_offers);
-                        setRecyclerViewAdapter();
+                task -> {
+                  if (task.isSuccessful()) {
+                    if (task.getResult() != null) {
+                      List<Offer> _offers = new ArrayList<>();
+                      List<DocumentSnapshot> documents = task.getResult().getDocuments();
+                      for (DocumentSnapshot document : documents) {
+                        Offer offer = document.toObject(Offer.class);
+                        offer.setUuid(document.getId());
+                        BoughtOffer boughtOffer =
+                            authenticationService.getUser().getOffers().stream()
+                                .filter(o -> o.getOfferId().equals(offer.getUuid()))
+                                .findFirst()
+                                .get();
+                        offer.setDescription("Ważne do: " + boughtOffer.getEndDate());
+                        offer.setImgBase64(place.getImgBase64());
+                        _offers.add(offer);
                       }
-                    } else {
-                      Log.w(TAG, "Error getting documents.", task.getException());
+                      offers = _offers;
+                      place.setCarnets(_offers);
+                      setRecyclerViewAdapter();
                     }
+                  } else {
+                    Log.w(TAG, "Error getting documents.", task.getException());
                   }
                 });
   }

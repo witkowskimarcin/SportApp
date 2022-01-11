@@ -1,11 +1,11 @@
 package com.example.sportapp.model;
 
-import java.io.Serializable;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
@@ -18,4 +18,16 @@ public class Offer extends SimpleFirebaseObject implements Serializable {
   String title;
   String description;
   String imgBase64;
+
+  public String getTypePL() {
+    if ("MONTH".equals(type)) {
+      return "miesiąc";
+    } else if ("YEAR".equals(type)) {
+      return "rok";
+    } else if ("DAY".equals(type)) {
+      return "dni";
+    } else {
+      return type;
+    }
+  }
 }

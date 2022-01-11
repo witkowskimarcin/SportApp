@@ -8,23 +8,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import com.example.sportapp.R;
 import com.example.sportapp.model.Offer;
 import com.example.sportapp.model.Place;
 import com.example.sportapp.service.AuthenticationService;
 import com.example.sportapp.service.FragmentService;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.OffsetDateTime;
@@ -72,7 +65,8 @@ public class OfferFragment extends Fragment {
     buttonBuy = view.findViewById(R.id.button_buy);
 
     title.setText(offer.getTitle());
-    description.setText(offer.getDescription());
+    description.setText(
+        (offer.getPrice() / 100) + " zł za " + offer.getValue() + " " + offer.getTypePL());
     if (StringUtils.isNotBlank(place.getImgBase64())) {
       byte[] decodedString = Base64.decode(place.getImgBase64(), Base64.DEFAULT);
       Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
@@ -81,6 +75,7 @@ public class OfferFragment extends Fragment {
 
     boolean canBuyOffer =
         authenticationService.isAuthenticated()
+            && authenticationService.getUser().getOffers() != null
             && authenticationService.getUser().getOffers().stream()
                 .filter(_offer -> _offer.getOfferId().equals(offer.getUuid()))
                 .findAny()
@@ -121,8 +116,15 @@ public class OfferFragment extends Fragment {
                 .collection("savedPositions")
                 .document()
                 .set(request)
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully written!"))
-                .addOnFailureListener(e -> Log.w(TAG, "Error writing document", e));
+                .addOnSuccessListener(aVoid -> {
+                  Log.d(TAG, "DocumentSnapshot successfully written!");
+                  Toast.makeText(getContext(), "Transakcja udana.", Toast.LENGTH_SHORT).show();
+                  buttonBuy.setVisibility(View.GONE);
+                })
+                .addOnFailureListener(e -> {
+                  Log.w(TAG, "Error writing document", e);
+                  Toast.makeText(getContext(), "Transakcja nieudana, spróbuj później.", Toast.LENGTH_SHORT).show();
+                });
           } else {
             Toast.makeText(
                     getContext(), "Musisz być zalogowany aby dokonać zakupu", Toast.LENGTH_SHORT)
