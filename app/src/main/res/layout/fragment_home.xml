@@ -6,24 +6,54 @@
     android:layout_height="match_parent"
     tools:context=".fragment.SearchFragment">
 
-    <EditText
-        android:id="@+id/text_city"
+    <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/button_find"
+        android:text="Kup swój wymarzony karnet!"
+        android:textColor="@color/color3"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.896" />
+        app:layout_constraintVertical_bias="0.01999998" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Spinner
+            android:id="@+id/spinner_city"
+            android:layout_width="350dp"
+            android:layout_height="50dp"
+            android:hint="Wybierz miejscowość"
+            app:layout_constraintBottom_toTopOf="@+id/button_find"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Spinner
+            android:id="@+id/spinner_categories"
+            android:layout_width="350dp"
+            android:layout_height="50dp"
+            android:hint="Wybierz kategorię"
+            app:layout_constraintBottom_toBottomOf="@+id/spinner_city"
+            app:layout_constraintTop_toTopOf="@+id/button_find" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/button_find"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/color1"
         android:text="Szukaj"
+        android:textColor="@color/white"
+        app:cornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

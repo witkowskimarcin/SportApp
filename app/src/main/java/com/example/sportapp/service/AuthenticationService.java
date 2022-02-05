@@ -2,8 +2,13 @@ package com.example.sportapp.service;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.fragment.app.FragmentActivity;
+
+import com.example.sportapp.R;
 import com.example.sportapp.model.BoughtOffer;
 import com.example.sportapp.model.User;
 import com.google.android.gms.tasks.Task;
@@ -39,6 +44,8 @@ public class AuthenticationService {
   private boolean admin = false;
 
   private static AuthenticationService instance;
+
+  private View headerView;
 
   public static AuthenticationService getInstance() {
     if (instance == null) {
@@ -80,6 +87,7 @@ public class AuthenticationService {
 
   public void logout() {
     user = null;
+    this.setHeaderView(this.headerView);
   }
 
   public void checkIfIsAdmin() {
@@ -119,6 +127,11 @@ public class AuthenticationService {
                     userExtended = document.toObject(User.class);
                     userExtended.setEmail(user.getEmail());
                     userExtended.setUuid(user.getUid());
+                    TextView navHeaderTitle = headerView.findViewById(R.id.nav_header_title);
+                    TextView navHeaderSubtitle = headerView.findViewById(R.id.nav_header_subtitle);
+                    navHeaderTitle.setText(
+                        userExtended.getFirstname() + " " + userExtended.getLastname());
+                    navHeaderSubtitle.setText(userExtended.getEmail());
                     fetchOffers();
                   } else {
                     Log.d(TAG, "No such document");
@@ -128,6 +141,14 @@ public class AuthenticationService {
                 }
               });
     }
+  }
+
+  public void setHeaderView(View headerView) {
+    this.headerView = headerView;
+    TextView navHeaderTitle = headerView.findViewById(R.id.nav_header_title);
+    TextView navHeaderSubtitle = headerView.findViewById(R.id.nav_header_subtitle);
+    navHeaderTitle.setText("Użytkownik niezalogowany");
+    navHeaderSubtitle.setText("");
   }
 
   static class CustomObservable extends Observable {
@@ -172,10 +193,10 @@ public class AuthenticationService {
                           if (now.isBefore(endDate)) {
                             _offers.add(offer);
                           }
-                          userExtended.setOffers(_offers);
-                          observable.notifyChange();
-                          observable.notifyObservers();
                         }
+                        userExtended.setOffers(_offers);
+                        observable.notifyChange();
+                        observable.notifyObservers();
                       }
                     } else {
                       Log.w(TAG, "Error getting documents.", task.getException());

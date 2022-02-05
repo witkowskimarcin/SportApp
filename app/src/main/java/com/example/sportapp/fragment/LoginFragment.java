@@ -101,7 +101,7 @@ public class LoginFragment extends Fragment {
               } else {
                 // If sign in fails, display a message to the user.
                 Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                Toast.makeText(getContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Błędne dane.", Toast.LENGTH_SHORT).show();
                 updateUI(null);
               }
             });
@@ -119,12 +119,12 @@ public class LoginFragment extends Fragment {
                 // Sign in success, update UI with the signed-in user's information
                 Log.d(TAG, "signInWithEmail:success");
                 FirebaseUser user = mAuth.getCurrentUser();
-                Toast.makeText(getContext(), "Authentication success.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Udało się zalogować!", Toast.LENGTH_SHORT).show();
                 updateUI(user);
               } else {
                 // If sign in fails, display a message to the user.
                 Log.w(TAG, "signInWithEmail:failure", task.getException());
-                Toast.makeText(getContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Logowanie nieudane. Błędne dane logowania!", Toast.LENGTH_SHORT).show();
                 updateUI(null);
               }
             });

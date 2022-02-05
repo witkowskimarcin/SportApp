@@ -17,49 +17,53 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sportapp.R;
 import com.example.sportapp.interfaces.ClickListener;
-import com.example.sportapp.model.Place;
+import com.example.sportapp.model.Offer;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-public class PlacesInfoViewAdapter extends RecyclerView.Adapter<PlacesInfoViewAdapter.ViewHolder> {
-  private List<Place> places;
+public class PostionsInfoViewAdapter
+    extends RecyclerView.Adapter<PostionsInfoViewAdapter.ViewHolder> {
+  private List<Offer> offers;
   private Context mContext;
   ClickListener clickListener;
 
-  public PlacesInfoViewAdapter(List<Place> places, ClickListener listener, Context mContext) {
-    this.places = places;
+  public PostionsInfoViewAdapter(List<Offer> offers, ClickListener listener, Context mContext) {
+    this.offers = offers;
     this.clickListener = listener;
     this.mContext = mContext;
   }
 
   @NonNull
   @Override
-  public PlacesInfoViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+  public PostionsInfoViewAdapter.ViewHolder onCreateViewHolder(
+      @NonNull ViewGroup viewGroup, int i) {
     LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
 
-    View view = layoutInflater.inflate(R.layout.inforow_place, viewGroup, false);
+    View view = layoutInflater.inflate(R.layout.inforow_position, viewGroup, false);
     return new ViewHolder(view, clickListener);
   }
 
   @Override
-  public void onBindViewHolder(@NonNull PlacesInfoViewAdapter.ViewHolder viewHolder, int i) {
-    final Place place = places.get(i);
-    viewHolder.setName(place.getName());
-    viewHolder.setDescription(place.getAddress());
-    viewHolder.setPhoto(place.getImgBase64());
+  public void onBindViewHolder(@NonNull PostionsInfoViewAdapter.ViewHolder viewHolder, int i) {
+    final Offer offer = offers.get(i);
+    viewHolder.setName(offer.getTitle());
+    viewHolder.setDescription("Ważne do " + offer.getBoughtOffer().getEndDate());
+    if (offer.getPlace() != null && StringUtils.isNotBlank(offer.getPlace().getImgBase64())) {
+      viewHolder.setPhoto(offer.getPlace().getImgBase64());
+    }
   }
 
   @Override
   public int getItemCount() {
-    return places == null ? 0 : places.size();
+    return offers == null ? 0 : offers.size();
   }
 
   public class ViewHolder extends RecyclerView.ViewHolder
       implements View.OnClickListener, View.OnLongClickListener {
-    private TextView name;
+    private TextView title;
     private TextView description;
     private ImageView photo;
     private Button addButton;
@@ -73,7 +77,7 @@ public class PlacesInfoViewAdapter extends RecyclerView.Adapter<PlacesInfoViewAd
     }
 
     private void components() {
-      name = itemView.findViewById(R.id.name);
+      title = itemView.findViewById(R.id.name);
       description = itemView.findViewById(R.id.description);
       photo = itemView.findViewById(R.id.photo);
       //            addButton = itemView.findViewById(R.id.addButton);
@@ -96,11 +100,11 @@ public class PlacesInfoViewAdapter extends RecyclerView.Adapter<PlacesInfoViewAd
     }
 
     public TextView getName() {
-      return name;
+      return title;
     }
 
     public void setName(String name) {
-      this.name.setText(name);
+      this.title.setText(name);
     }
 
     public TextView getDescription() {

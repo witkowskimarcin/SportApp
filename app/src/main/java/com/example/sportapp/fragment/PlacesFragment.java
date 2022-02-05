@@ -17,11 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.sportapp.Adapters.PlacesInfoViewAdapter;
 import com.example.sportapp.R;
 import com.example.sportapp.interfaces.ClickListener;
-import com.example.sportapp.model.Offer;
+import com.example.sportapp.model.Category;
+import com.example.sportapp.model.City;
 import com.example.sportapp.model.Place;
 import com.example.sportapp.service.AuthenticationService;
 import com.example.sportapp.service.FragmentService;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -42,21 +42,21 @@ public class PlacesFragment extends Fragment {
   private FragmentService fragmentService = FragmentService.getInstance();
 
   private List<Place> places;
+  private City city;
+  private Category category;
 
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     fragmentService.setLastFragment(R.id.nav_home);
 
-    //        if (authenticationService.isAuthenticated()) {
     View root = inflater.inflate(R.layout.fragment_places, container, false);
+
+    if (getArguments() != null) {
+      city = (City) getArguments().getSerializable("city");
+      category = (Category) getArguments().getSerializable("category");
+    }
+
     return root;
-    //        }
-    //
-    //        // wroc do logowania
-    //        NavController navController = Navigation.findNavController(getActivity(),
-    // R.id.nav_host_fragment);
-    //        navController.navigate(R.id.nav_login);
-    //        return null;
   }
 
   @Override
@@ -75,81 +75,114 @@ public class PlacesFragment extends Fragment {
   public void getAllPlaces() {
     Task<QuerySnapshot> querySnapshotTask =
         db.collection("places")
+            .whereEqualTo("cityId", city.getUuid())
+            .whereArrayContains("categoryIds", category.getUuid())
             .get()
             .addOnCompleteListener(
-                    task -> {
-                      if (task.isSuccessful()) {
-                        if (task.getResult() != null) {
-                          List<Place> _places = new ArrayList<>();
-                          List<DocumentSnapshot> documents = task.getResult().getDocuments();
-                          for (DocumentSnapshot document : documents) {
-                            Place place = document.toObject(Place.class);
-                            place.setUuid(document.getId());
-                            getAllCarnetsFromPlace(place);
-                            _places.add(place);
-                          }
-                          System.out.println("Do");
-                          places = _places;
-                        }
-                      } else {
-                        Log.w(TAG, "Error getting documents.", task.getException());
+                task -> {
+                  if (task.isSuccessful()) {
+                    if (task.getResult() != null) {
+                      List<Place> _places = new ArrayList<>();
+                      List<DocumentSnapshot> documents = task.getResult().getDocuments();
+                      for (DocumentSnapshot document : documents) {
+                        Place place = document.toObject(Place.class);
+                        place.setUuid(document.getId());
+                        _places.add(place);
                       }
-                    });
-  }
+                      System.out.println("Do");
+                      places = _places;
 
-  public void getAllCarnetsFromPlace(Place place) {
-    Task<QuerySnapshot> querySnapshotTask =
-        db.collection("places")
-            .document(place.getUuid())
-            .collection("carnets")
-            .get()
-            .addOnCompleteListener(
-                new OnCompleteListener<QuerySnapshot>() {
-                  @Override
-                  public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                      if (task.getResult() != null) {
-                        List<Offer> _offers = new ArrayList<>();
-                        List<DocumentSnapshot> documents = task.getResult().getDocuments();
-                        for (DocumentSnapshot document : documents) {
-                          Offer offer = document.toObject(Offer.class);
-                          offer.setUuid(document.getId());
-                          _offers.add(offer);
-                        }
-                        place.setCarnets(_offers);
-                        placesInfoViewAdapter =
-                            new PlacesInfoViewAdapter(
-                                places,
-                                new ClickListener() {
-                                  @Override
-                                  public void onPositionClicked(int position) {
-                                    Toast.makeText(
-                                            getContext(),
-                                            places.get(position).getName(),
-                                            Toast.LENGTH_SHORT)
-                                        .show();
+                      placesInfoViewAdapter =
+                          new PlacesInfoViewAdapter(
+                              places,
+                              new ClickListener() {
+                                @Override
+                                public void onPositionClicked(int position) {
+                                  Toast.makeText(
+                                          getContext(),
+                                          places.get(position).getName(),
+                                          Toast.LENGTH_SHORT)
+                                      .show();
 
-                                    Bundle args = new Bundle();
-                                    args.putSerializable("place", places.get(position));
-                                    FragmentManager fragmentManager = getParentFragmentManager();
-                                    fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.nav_host_fragment, PlaceFragment.class, args)
-                                        .setReorderingAllowed(true)
-                                        .addToBackStack("name") // name can be null
-                                        .commit();
-                                  }
+                                  Bundle args = new Bundle();
+                                  args.putSerializable("place", places.get(position));
+                                  args.putSerializable("category", category);
+                                  FragmentManager fragmentManager = getParentFragmentManager();
+                                  fragmentManager
+                                      .beginTransaction()
+                                      .replace(R.id.nav_host_fragment, PlaceFragment.class, args)
+                                      .setReorderingAllowed(true)
+                                      .addToBackStack("PlaceFragment") // name can be null
+                                      .commit();
+                                }
 
-                                  @Override
-                                  public void onLongClicked(int position) {}
-                                },
-                                getContext());
-                        infoRecyclerView.setAdapter(placesInfoViewAdapter);
-                      }
-                    } else {
-                      Log.w(TAG, "Error getting documents.", task.getException());
+                                @Override
+                                public void onLongClicked(int position) {}
+                              },
+                              getContext());
+                      infoRecyclerView.setAdapter(placesInfoViewAdapter);
                     }
+                  } else {
+                    Log.w(TAG, "Error getting documents.", task.getException());
                   }
                 });
   }
+
+  //  public void getAllCarnetsFromPlace(Place place) {
+  //    Task<QuerySnapshot> querySnapshotTask =
+  //        db.collection("places")
+  //            .document(place.getUuid())
+  //            .collection("carnets")
+  //            .get()
+  //            .addOnCompleteListener(
+  //                new OnCompleteListener<QuerySnapshot>() {
+  //                  @Override
+  //                  public void onComplete(@NonNull Task<QuerySnapshot> task) {
+  //                    if (task.isSuccessful()) {
+  //                      if (task.getResult() != null) {
+  //                        List<Offer> _offers = new ArrayList<>();
+  //                        List<DocumentSnapshot> documents = task.getResult().getDocuments();
+  //                        for (DocumentSnapshot document : documents) {
+  //                          Offer offer = document.toObject(Offer.class);
+  //                          offer.setUuid(document.getId());
+  //                          _offers.add(offer);
+  //                        }
+  //                        place.setOffers(_offers);
+  //                        placesInfoViewAdapter =
+  //                            new PlacesInfoViewAdapter(
+  //                                places,
+  //                                new ClickListener() {
+  //                                  @Override
+  //                                  public void onPositionClicked(int position) {
+  //                                    Toast.makeText(
+  //                                            getContext(),
+  //                                            places.get(position).getName(),
+  //                                            Toast.LENGTH_SHORT)
+  //                                        .show();
+  //
+  //                                    Bundle args = new Bundle();
+  //                                    args.putSerializable("place", places.get(position));
+  //                                    FragmentManager fragmentManager =
+  // getParentFragmentManager();
+  //                                    fragmentManager
+  //                                        .beginTransaction()
+  //                                        .replace(R.id.nav_host_fragment, PlaceFragment.class,
+  // args)
+  //                                        .setReorderingAllowed(true)
+  //                                        .addToBackStack("PlaceFragment") // name can be null
+  //                                        .commit();
+  //                                  }
+  //
+  //                                  @Override
+  //                                  public void onLongClicked(int position) {}
+  //                                },
+  //                                getContext());
+  //                        infoRecyclerView.setAdapter(placesInfoViewAdapter);
+  //                      }
+  //                    } else {
+  //                      Log.w(TAG, "Error getting documents.", task.getException());
+  //                    }
+  //                  }
+  //                });
+  //  }
 }

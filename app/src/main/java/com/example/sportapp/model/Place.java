@@ -13,10 +13,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class Place extends SimpleFirebaseObject implements Serializable {
-  String city;
   String address;
-  String postCode;
+  String description;
   String name;
   String imgBase64;
-  List<Offer> carnets;
+  String cityId;
+  String coordinates;
+  List<String> categoryIds;
+  List<Offer> offers;
+
+  public double getLatitude() {
+    return Double.parseDouble(coordinates.substring(0, coordinates.indexOf(',')));
+  }
+
+  public double getLongitude() {
+    return Double.parseDouble(coordinates.substring(coordinates.indexOf(',') + 1));
+  }
 }

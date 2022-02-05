@@ -9,10 +9,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+
 import com.example.sportapp.R;
 import com.example.sportapp.model.User;
 import com.example.sportapp.service.AuthenticationService;
@@ -22,13 +24,14 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MyAccountFragment extends Fragment {
-  private static final String TAG = "EmailPassword";
+  private static final String TAG = "MyAccountFragment";
   private final AuthenticationService authenticationService = AuthenticationService.getInstance();
   private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -36,6 +39,7 @@ public class MyAccountFragment extends Fragment {
   private final FragmentService fragmentService = FragmentService.getInstance();
   TextView textViewRegister;
   Button buttonRegister;
+  Button buttonLogout;
   EditText editTextEmail;
   EditText editTextFirstname;
   EditText editTextLastname;
@@ -54,6 +58,7 @@ public class MyAccountFragment extends Fragment {
     mAuth = FirebaseAuth.getInstance();
     textViewRegister = root.findViewById(R.id.textViewRegister);
     buttonRegister = root.findViewById(R.id.buttonRegister);
+    buttonLogout = root.findViewById(R.id.buttonLogout);
     editTextEmail = root.findViewById(R.id.editTextEmail);
     editTextFirstname = root.findViewById(R.id.editTextFirstname);
     editTextLastname = root.findViewById(R.id.editTextLastname);
@@ -76,6 +81,7 @@ public class MyAccountFragment extends Fragment {
       editTextCountry.setText(user.getCountry());
       editTextCity.setText(user.getCity());
       editTextPostCode.setText(user.getPostcode());
+      buttonLogout.setVisibility(View.VISIBLE);
 
       buttonRegister.setOnClickListener(
           v -> {
@@ -89,6 +95,15 @@ public class MyAccountFragment extends Fragment {
                 .equals(editTextPasswordConfirm.getText().toString())) {
               Toast.makeText(getContext(), "Hasło nieprawidłowe.", Toast.LENGTH_SHORT).show();
             } else editAccount();
+          });
+
+      buttonLogout.setOnClickListener(
+          view -> {
+            authenticationService.logout();
+            // wroc do logowania
+            NavController navController =
+                Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
+            navController.navigate(R.id.nav_login);
           });
 
       return root;

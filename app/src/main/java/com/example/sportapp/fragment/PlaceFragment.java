@@ -22,12 +22,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.sportapp.Adapters.OffersInfoViewAdapter;
 import com.example.sportapp.R;
 import com.example.sportapp.interfaces.ClickListener;
+import com.example.sportapp.model.Category;
+import com.example.sportapp.model.Offer;
 import com.example.sportapp.model.Place;
 import com.example.sportapp.service.AuthenticationService;
 import com.example.sportapp.service.FragmentService;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class PlaceFragment extends Fragment {
   private static final String TAG = "PlaceFragment";
@@ -40,6 +45,7 @@ public class PlaceFragment extends Fragment {
   private FragmentService fragmentService = FragmentService.getInstance();
 
   private Place place;
+  private Category category;
   private TextView title;
   private TextView description;
   private ImageView image;
@@ -49,21 +55,14 @@ public class PlaceFragment extends Fragment {
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     fragmentService.setLastFragment(R.id.nav_home);
 
-    //        if (authenticationService.isAuthenticated()) {
     View root = inflater.inflate(R.layout.fragment_place, container, false);
 
     if (getArguments() != null) {
       place = (Place) getArguments().getSerializable("place");
+      category = (Category) getArguments().getSerializable("category");
     }
 
     return root;
-    //        }
-    //
-    //        // wroc do logowania
-    //        NavController navController = Navigation.findNavController(getActivity(),
-    // R.id.nav_host_fragment);
-    //        navController.navigate(R.id.nav_login);
-    //        return null;
   }
 
   @Override
@@ -72,7 +71,7 @@ public class PlaceFragment extends Fragment {
     this.components(view);
 
     title.setText(place.getName());
-    description.setText(place.getAddress() + " " + place.getPostCode());
+    description.setText(place.getAddress());
     if (StringUtils.isNotBlank(place.getImgBase64())) {
       byte[] decodedString = Base64.decode(place.getImgBase64(), Base64.DEFAULT);
       Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
@@ -80,28 +79,35 @@ public class PlaceFragment extends Fragment {
     }
 
     RecyclerView carnets = new RecyclerView(getContext());
-    //    carnets.setId(69);
     carnets.setLayoutParams(
         new RecyclerView.LayoutParams(
             RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
     linearLayout.addView(carnets);
     carnets.setLayoutManager(new LinearLayoutManager(getContext()));
 
+    List<Offer> offers = place.getOffers();
+    if (category != null && StringUtils.isNotBlank(category.getUuid())) {
+      offers =
+          place.getOffers().stream()
+              .filter(offer -> offer.getCategoryId().equals(category.getUuid()))
+              .collect(Collectors.toList());
+    }
+
     OffersInfoViewAdapter offersInfoViewAdapter =
         new OffersInfoViewAdapter(
-            place.getCarnets(),
+            offers,
             new ClickListener() {
               @Override
               public void onPositionClicked(int position) {
                 Toast.makeText(
                         getContext(),
-                        place.getCarnets().get(position).getTitle(),
+                        place.getOffers().get(position).getTitle(),
                         Toast.LENGTH_SHORT)
                     .show();
 
                 Bundle args = new Bundle();
                 args.putSerializable("place", place);
-                args.putSerializable("offer", place.getCarnets().get(position));
+                args.putSerializable("offer", place.getOffers().get(position));
                 FragmentManager fragmentManager = getParentFragmentManager();
                 fragmentManager
                     .beginTransaction()

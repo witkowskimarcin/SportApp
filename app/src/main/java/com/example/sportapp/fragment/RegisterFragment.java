@@ -8,8 +8,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
 import com.example.sportapp.R;
 import com.example.sportapp.model.User;
 import com.example.sportapp.service.AuthenticationService;
@@ -19,12 +21,13 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 
 public class RegisterFragment extends Fragment {
-  private static final String TAG = "EmailPassword";
+  private static final String TAG = "RegisterFragment";
   private final AuthenticationService authenticationService = AuthenticationService.getInstance();
   private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -151,12 +154,16 @@ public class RegisterFragment extends Fragment {
                 // Sign in success, update UI with the signed-in user's information
                 Log.d(TAG, "signInWithEmail:success");
                 FirebaseUser user = mAuth.getCurrentUser();
-                Toast.makeText(getContext(), "Authentication success.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Udało się zalogować!", Toast.LENGTH_SHORT).show();
                 updateUI(user);
               } else {
                 // If sign in fails, display a message to the user.
                 Log.w(TAG, "signInWithEmail:failure", task.getException());
-                Toast.makeText(getContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(
+                        getContext(),
+                        "Logowanie nie powiodło się, błędne dane logowania.",
+                        Toast.LENGTH_SHORT)
+                    .show();
                 updateUI(null);
               }
             });

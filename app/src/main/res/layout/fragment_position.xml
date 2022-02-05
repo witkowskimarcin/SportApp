@@ -15,8 +15,6 @@
         android:orientation="horizontal">
 
 
-
-
         <ImageView
             android:id="@+id/photo"
             android:layout_width="101dp"
@@ -66,18 +64,22 @@
         android:layout_width="match_parent"
         android:layout_height="400dp"></fragment>
 
-    <TextView
-        android:id="@+id/textViewToBuy"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Aby dokonać zakupu musisz się zalogować"
-        android:textSize="16dp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/linearLayout2">
+    </LinearLayout>
 
-    <com.paypal.checkout.paymentbutton.PayPalButton
-        android:id="@+id/payPalButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/buttonAddToCalendar"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="Dodaj do kalendarza"
+        android:visibility="gone"
+        app:cornerRadius="20dp"></Button>
 
 </LinearLayout>
     </ScrollView>

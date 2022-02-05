@@ -40,7 +40,7 @@ public class OffersInfoViewAdapter extends RecyclerView.Adapter<OffersInfoViewAd
   public OffersInfoViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
     LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
 
-    View view = layoutInflater.inflate(R.layout.inforow, viewGroup, false);
+    View view = layoutInflater.inflate(R.layout.inforow_offer, viewGroup, false);
     return new ViewHolder(view, clickListener);
   }
 
